@@ -1,0 +1,14 @@
+{
+	"name": "raster-vision",
+	"context": "..",
+	"dockerFile": "../Dockerfile",
+	"settings": {
+		"terminal.integrated.shell.linux": null
+	},
+	"workspaceMount": "source=${localWorkspaceFolder},target=/opt/src,type=bind,consistency=delegated",
+	"workspaceFolder": "/opt/src",
+	"containerEnv": {
+		"PS1": "\\[\\033[38;5;10m\\]\\w\\[$(tput sgr0)\\]\\$ \\[$(tput sgr0)\\]"
+	},
+	"extensions": ["ms-python.python"]
+}

@@ -1,4 +1,4 @@
-ARG CUDA_VERSION
+ARG CUDA_VERSION=10.0
 FROM nvidia/cuda:${CUDA_VERSION}-cudnn7-devel-ubuntu16.04
 
 RUN apt-get update && apt-get install -y software-properties-common python-software-properties
