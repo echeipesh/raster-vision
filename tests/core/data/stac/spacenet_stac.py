@@ -22,21 +22,34 @@ class SpaceNetStac(Catalog):
         self.base_file_uri = 'https://s3.amazonaws.com/azavea-research-public-data/raster-vision/examples/spacenet'
         blank_extent = Extent(SpatialExtent([None, None, None]), TemporalExtent.from_now())
 
+        # Label Collection
         self.label_collection = Collection('label', "Building Labels Collection", blank_extent)
         self.add_child(self.label_collection)
         self.label_href_base = os.path.join(os.path.dirname(self.get_self_href()), 'label')
         self.label_collection.set_self_href(os.path.join(self.label_href_base, 'collection.json'))
 
+        self.label_train_catalog = Catalog('label-train', "Training Split",
+            href=os.path.join(self.label_href_base, 'train.json'))
+        self.label_collection.add_child(self.label_train_catalog)
+
+        self.label_test_catalog = Catalog('label-test', "Testing Split",
+            href=os.path.join(self.label_href_base, 'test.json'))
+        self.label_collection.add_child(self.label_test_catalog)
+
+        # Image Collection
         self.image_collection = Collection('image', "Image Chip Collection", blank_extent)
         self.add_child(self.image_collection)
         self.image_href_base = os.path.join(os.path.dirname(self.get_self_href()), 'image')
         self.image_collection.set_self_href(os.path.join(self.image_href_base, 'collection.json'))
 
-        # self.training_split = Catalog('training', 'Training Split')
-        # self.add_child(self.training_split)
+        self.image_train_catalog = Catalog('image-train', "Training Split",
+            href=os.path.join(self.image_href_base, 'train.json'))
+        self.image_collection.add_child(self.image_train_catalog)
 
-        # self.testing_split = Catalog('testing', 'Testing Split')
-        # self.add_child(self.testing_split)
+        self.image_test_catalog = Catalog('image-test', "Testing Split",
+            href=os.path.join(self.image_href_base, 'test.json'))
+        self.image_collection.add_child(self.image_test_catalog)
+
 
     def spacenet_cell(self, img_file, label_file):
         img_asset_href = os.path.join(self.base_file_uri, img_file)
@@ -94,14 +107,18 @@ class SpaceNetStac(Catalog):
 
         self.image_collection.add_item(image_item)
         self.label_collection.add_item(label_item)
+
         return (image_item, label_item)
 
-    def add_training_set(self, img_file, label_file):
+    def add_train_set(self, img_file, label_file):
         (img, lbl) = self.spacenet_cell(img_file, label_file)
-        # I need to split training and labels
+        self.image_train_catalog.add_item(img)
+        self.label_train_catalog.add_item(lbl)
 
-    def add_testing_set(self, img_file, label_file):
+    def add_test_set(self, img_file, label_file):
         (img, lbl) = self.spacenet_cell(img_file, label_file)
+        self.image_test_catalog.add_item(img)
+        self.label_test_catalog.add_item(lbl)
 
     def finalize(self):
         """Update collection extends based on the extent of their children"""

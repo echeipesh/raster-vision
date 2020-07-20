@@ -13,19 +13,21 @@ class TestStacSource(unittest.TestCase):
         pass
         # self.tmp_dir_obj.cleanup()
 
-    # TODO: make train/test split catalog
     # TODO: read DatasetConfig from STAC
     # TODO: train RV model form STAC DatasetConfig
     # TODO: parse the Sen1Floods11 catalog
     def test_make_stac(self):
         from . import spacenet_stac
-        # I'm going to train on this fucker .. so I better read a catalog
+        stac = spacenet_stac.SpaceNetStac('tiny-spacenet', 'Tiny SpaceNet Subset',
+            href='/opt/data/tmp/catalog.json')
 
-        # TODO: apply best practices from tutorial to this guy
-        stac = spacenet_stac.SpaceNetStac('tiny-spacenet', 'Tiny SpaceNet Subset', href='/opt/data/tmp/catalog.json')
-        stac.add_training_set(
+        stac.add_train_set(
             img_file='RGB-PanSharpen_AOI_2_Vegas_img205.tif',
             label_file='buildings_AOI_2_Vegas_img205.geojson')
+
+        stac.add_test_set(
+            img_file='RGB-PanSharpen_AOI_2_Vegas_img25.tif',
+            label_file='buildings_AOI_2_Vegas_img25.geojson')
 
         stac.finalize()
         stac.describe()
